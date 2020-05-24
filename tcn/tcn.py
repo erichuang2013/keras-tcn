@@ -3,6 +3,7 @@ from typing import List
 
 from tensorflow.keras import backend as K, Model, Input, optimizers
 from tensorflow.keras import layers
+from keras.initializers import he_normal
 from tensorflow.keras.layers import Activation, SpatialDropout1D, Lambda
 from tensorflow.keras.layers import Layer, Conv1D, Dense, BatchNormalization, LayerNormalization
 
@@ -29,6 +30,7 @@ class ResidualBlock(Layer):
                  activation='relu',
                  dropout_rate=0,
                  kernel_initializer='he_normal',
+                 seed = 87,
                  use_batch_norm=False,
                  use_layer_norm=False,
                  **kwargs):
@@ -59,7 +61,7 @@ class ResidualBlock(Layer):
         self.dropout_rate = dropout_rate
         self.use_batch_norm = use_batch_norm
         self.use_layer_norm = use_layer_norm
-        self.kernel_initializer = kernel_initializer
+        self.kernel_initializer = he_normal(seed)
         self.layers = []
         self.layers_outputs = []
         self.shape_match_conv = None
@@ -195,6 +197,7 @@ class TCN(Layer):
                  return_sequences=False,
                  activation='relu',
                  kernel_initializer='he_normal',
+                 seed = 87,
                  use_batch_norm=False,
                  use_layer_norm=False,
                  **kwargs):
@@ -208,7 +211,7 @@ class TCN(Layer):
         self.nb_filters = nb_filters
         self.activation = activation
         self.padding = padding
-        self.kernel_initializer = kernel_initializer
+        self.kernel_initializer = he_normal(seed)
         self.use_batch_norm = use_batch_norm
         self.use_layer_norm = use_layer_norm
         self.skip_connections = []
@@ -338,6 +341,7 @@ def compiled_tcn(num_feat,  # type: int
                  dropout_rate=0.05,  # type: float
                  name='tcn',  # type: str,
                  kernel_initializer='he_normal',  # type: str,
+                 seed = 87,
                  activation='relu',  # type:str,
                  opt='adam',
                  lr=0.002,
